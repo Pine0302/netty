@@ -1,5 +1,6 @@
 package com.pine.nio;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,14 +11,15 @@ public class NIOFileChannle02 {
     public static void main(String[] args) throws IOException {
 
         //创建一个输出流 channel
-        FileInputStream fileInputStream = new FileInputStream("/Users/pine/Work/netty/netty/NIOFileChannle01.txt");
+        File file = new File("NIOFileChannle01.txt");
+        FileInputStream fileInputStream = new FileInputStream(file);
 
         //通过 fileInputStream 获取对应的fileChannel
         //这个 fileChannel 真实的数据类型是 FileChannelImpl
         FileChannel fileChannel = fileInputStream.getChannel();
 
         //创建一个缓冲区 ByteBuffer
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+        ByteBuffer byteBuffer = ByteBuffer.allocate((int) file.length());
 
         //将channel数据读入buffer
         fileChannel.read(byteBuffer);
