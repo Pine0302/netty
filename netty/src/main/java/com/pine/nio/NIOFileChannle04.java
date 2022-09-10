@@ -24,7 +24,8 @@ public class NIOFileChannle04 {
         //channel 复制
         outputChannel.transferFrom(inputChannel,0, inputChannel.size());
 
-
+        outputChannel.close();
+        inputChannel.close();
         fileInputStream.close();
         fileOutputStream.close();
 
