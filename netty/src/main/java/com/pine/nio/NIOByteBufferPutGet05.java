@@ -20,6 +20,24 @@ public class NIOByteBufferPutGet05 {
         System.out.println(buffer.getShort());
 
 
+        ByteBuffer buffer1 = ByteBuffer.allocate(64);
+        for (int i = 0; i < 64; i++) {
+            buffer1.put((byte) i);
+        }
+
+        //翻转
+        buffer1.flip();
+
+        //得到一个只读buffer
+        ByteBuffer readOnlyBuffer = buffer1.asReadOnlyBuffer();
+        System.out.println(readOnlyBuffer);
+
+        //读取
+        while(readOnlyBuffer.hasRemaining()){
+            System.out.println(readOnlyBuffer.get());
+        }
+
+        readOnlyBuffer.put((byte) 100);   //ReadOnlyBufferException
 
     }
 }
