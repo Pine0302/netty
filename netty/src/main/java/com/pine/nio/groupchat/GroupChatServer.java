@@ -40,13 +40,14 @@ public class GroupChatServer {
     //监听
     public void listen(){
 
+        System.out.println("监听线程： "+Thread.currentThread().getName());
         try{
             //循环处理
             while (true){
 
                 int count = selector.select();
                 if(count > 0){ //有事件处理
-
+                    System.out.println("开始监听");
                     //遍历得到的selectionKey集合
                     Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
                     while (keyIterator.hasNext()){
@@ -129,6 +130,7 @@ public class GroupChatServer {
     //转发消息给其他客户（通道）
     private void sendInfoToOtherClients(String msg,SocketChannel self) throws IOException {
 
+        System.out.println("服务器转发数据给客户端线程： "+Thread.currentThread().getName());
         System.out.println("服务器转发消息中。。。");
 
         //遍历所有注册到 selector 上的 socketChannel 并排除 self
