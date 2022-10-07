@@ -1,17 +1,12 @@
 package com.pine.netty.simple;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import java.util.Map;
-
-public class NettyServer {
+public class NettyServerTask {
     public static void main(String[] args) throws InterruptedException {
         //创建 BossGroup 和 workerGroup
 
@@ -32,13 +27,15 @@ public class NettyServer {
                     .channel(NioServerSocketChannel.class)   //使用 NioServerSocketChannel 作为服务器的通道实现
                     .option(ChannelOption.SO_BACKLOG, 128) //设置线程队列等待连接个数
                     .childOption(ChannelOption.SO_KEEPALIVE,true)  //设置保持活动连接状态
-                    .handler(null)  //该 handler 对应 bossGroup ，childHandler 对应 workerGroup
                     .childHandler(new ChannelInitializer<SocketChannel>() {   //创建一个通道初始化对象
 
                         //给 pipeline 设置处理器
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new NettyServerHandler());
+                            System.out.println("客户 socketchannel hashcode=" + ch.hashCode());
+                            //可以使用一个集合管理 SocketChannel ,再推送消息时，可以将业务加入到各个 channel 对应的
+                            //NIOEventLoop  的 taskQueue 或者 scheduleTaskQueue
+                            ch.pipeline().addLast(new NettyServerHandlerTask());
                         }
                     });  //给我们的 workerGroup 的 EventLoop 对应的管道设置处理器
             System.out.println("... 服务器 is ready...");
@@ -47,8 +44,22 @@ public class NettyServer {
             //启动服务器（并绑定端口）
             ChannelFuture cf = bootstrap.bind(6668).sync();
 
+            //给 cf 注册监听器，监听我们关心的事件
+            cf.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                    if(cf.isSuccess()){
+                        System.out.println("监听端口 6668 成功");
+                    }else {
+                        System.out.println("监听端口 6668 失败");
+                    }
+                }
+            });
+
             //对关闭通道进行监听
             cf.channel().closeFuture().sync();
+
+
 
         }finally {
             bossGroup.shutdownGracefully();
