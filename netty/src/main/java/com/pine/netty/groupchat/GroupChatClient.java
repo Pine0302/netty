@@ -1,5 +1,4 @@
 package com.pine.netty.groupchat;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -7,11 +6,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-
 import java.util.Scanner;
 
 public class GroupChatClient {
-
     private final String host; //监听端口
     private final int port; //监听端口
 
@@ -19,7 +16,6 @@ public class GroupChatClient {
         this.host = host;
         this.port = port;
     }
-
     public void run() throws InterruptedException {
         EventLoopGroup group = new NioEventLoopGroup();
         try{
@@ -52,15 +48,13 @@ public class GroupChatClient {
                 //通过 channel 发送到服务器端
                 channel.writeAndFlush(msg + "\n");
             }
-
         }finally {
             group.shutdownGracefully();
         }
-
     }
-
     public static void main(String[] args) throws InterruptedException {
-        new GroupChatClient("127.0.0.1",3020).run();
+        //new GroupChatClient("43.142.106.54",3028).run();
+        new GroupChatClient("127.0.0.1",3028).run();
     }
 
 
